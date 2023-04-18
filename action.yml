@@ -72,33 +72,33 @@ runs:
       id: affected-stacks
       uses: cloudposse/github-action-atmos-affected-stacks@0.0.1
       with:
-        default-branch: ${{input.default-branch}}
-        head-ref: ${{input.head-ref}}
-        install-atmos: ${{input.install-atmos}}
-        atmos-version: ${{input.atmos-version}}
-        install-terraform: ${{input.install-terraform}}
-        terraform-version: ${{input.terraform-version}}
-        install-jq: ${{input.install-jq}}
-        jq-version: ${{input.jq-version}}
-        jq-force: ${{input.jq-force}}
+        default-branch: ${{inputs.default-branch}}
+        head-ref: ${{inputs.head-ref}}
+        install-atmos: ${{inputs.install-atmos}}
+        atmos-version: ${{inputs.atmos-version}}
+        install-terraform: ${{inputs.install-terraform}}
+        terraform-version: ${{inputs.terraform-version}}
+        install-jq: ${{inputs.install-jq}}
+        jq-version: ${{inputs.jq-version}}
+        jq-force: ${{inputs.jq-force}}
 
     - name: Setup Spacectl
-      if: ${{input.install-atmos=="true"}}
+      if: ${{inputs.install-atmos=="true"}}
       uses: spacelift-io/setup-spacectl@v0.3.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        version: ${{input.spacectl-version}}
+        version: ${{inputs.spacectl-version}}
 
     - name: Trigger Spacelift Stacks
       shell: bash
       env:
-        SPACELIFT_API_KEY_ENDPOINT: ${{input.spacelift-endpoint}}
-        SPACELIFT_API_KEY_ID: ${{ input.spacelift-api-key-id }}
-        SPACELIFT_API_KEY_SECRET: ${{ input.spacelift-api-key-secret }}
+        SPACELIFT_API_KEY_ENDPOINT: ${{inputs.spacelift-endpoint}}
+        SPACELIFT_API_KEY_ID: ${{ inputs.spacelift-api-key-id }}
+        SPACELIFT_API_KEY_SECRET: ${{ inputs.spacelift-api-key-secret }}
       run: |
         spacectl_deploy="false"
-        if [ "${{input.deploy}}" = "true" ]; then
+        if [ "${{inputs.deploy}}" = "true" ]; then
           spacectl_deploy="true"
         fi
         ./scripts/spacelift-trigger-affected-stacks.sh ${{ steps.affected-stacks.outputs.affected }} ${{spacectl_deploy}}
