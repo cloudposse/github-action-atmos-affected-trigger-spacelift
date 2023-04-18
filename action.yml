@@ -33,6 +33,10 @@ inputs:
     description: The version of atmos to install if install-atmos is true
     required: false
     default: "latest"
+  atmos-config-path:
+    description: The path to atmos.yaml
+    required: false
+    default: ./atmos.yaml
   install-spacectl:
     description: Whether to install spacectl
     required: false
