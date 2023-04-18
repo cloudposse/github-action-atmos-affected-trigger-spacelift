@@ -74,12 +74,13 @@ runs:
 
     - name: Atmos Affected Stacks
       id: affected-stacks
-      uses: cloudposse/github-action-atmos-affected-stacks@0.0.1
+      uses: cloudposse/github-action-atmos-affected-stacks@0.1.0
       with:
         default-branch: ${{inputs.default-branch}}
         head-ref: ${{inputs.head-ref}}
         install-atmos: ${{inputs.install-atmos}}
         atmos-version: ${{inputs.atmos-version}}
+        atmos-config-path: ${{inputs.atmos-config-path}}
         install-terraform: ${{inputs.install-terraform}}
         terraform-version: ${{inputs.terraform-version}}
         install-jq: ${{inputs.install-jq}}
