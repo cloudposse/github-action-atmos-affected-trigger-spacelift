@@ -83,10 +83,8 @@ runs:
         jq-force: ${{inputs.jq-force}}
 
     - name: Setup Spacectl
-      if: ${{inputs.install-atmos=="true"}}
+      if: inputs.install-atmos=="true"
       uses: spacelift-io/setup-spacectl@v0.3.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         version: ${{inputs.spacectl-version}}
 
@@ -101,5 +99,5 @@ runs:
         if [ "${{inputs.deploy}}" = "true" ]; then
           spacectl_deploy="true"
         fi
-        ./scripts/spacelift-trigger-affected-stacks.sh ${{ steps.affected-stacks.outputs.affected }} ${{spacectl_deploy}}
+        ./scripts/spacelift-trigger-affected-stacks.sh ${{ steps.affected-stacks.outputs.affected }} $spacectl_deploy
 
