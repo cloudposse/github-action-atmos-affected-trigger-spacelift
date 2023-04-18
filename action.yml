@@ -83,7 +83,7 @@ runs:
         jq-force: ${{inputs.jq-force}}
 
     - name: Setup Spacectl
-      if: inputs.install-spacectl==="true"
+      if: ${{ inputs.install-spacectl == 'true' }}
       uses: spacelift-io/setup-spacectl@v0.3.0
       with:
         version: ${{inputs.spacectl-version}}
