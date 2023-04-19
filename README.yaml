@@ -5,11 +5,12 @@
 #
 
 # Name of this project
-name: example-github-action-composite
-
+name: github-action-atmos-affected-trigger-spacelift
 # Tags of this project
 tags:
   - github-action
+  - atmos
+  - spacelift
 
 # Logo for this project
 #logo: docs/logo.png
@@ -18,13 +19,13 @@ tags:
 license: "APACHE2"
 
 # Canonical GitHub repo
-github_repo: cloudposse/example-github-action-composite
+github_repo: cloudposse/github-action-atmos-affected-trigger-spacelift
 
 # Badges to display
 badges:
   - name: "Latest Release"
-    image: "https://img.shields.io/github/release/cloudposse/example-github-action-composite.svg"
-    url: "https://github.com/cloudposse/example-github-action-composite/releases/latest"
+    image: "https://img.shields.io/github/release/cloudposse/github-action-atmos-affected-trigger-spacelift.svg"
+    url: "https://github.com/cloudposse/github-action-atmos-affected-trigger-spacelift/releases/latest"
   - name: "Slack Community"
     image: "https://slack.cloudposse.com/badge.svg"
     url: "https://slack.cloudposse.com"
@@ -32,11 +33,10 @@ badges:
 related: []
 
 # Short description of this project
-description: Template repository of composite GitHub Action
+description: GitHub Actions for Triggering Spacelift Stacks
 
 introduction: |-
-  This is template repository to create composite GitHub Actions. 
-  Feel free to use it as reference and starting point.
+  This repo contains a GitHub Action that determines the affected atmos stacks for a PR, then triggers the corresponding spacelift stacks.
 
 references:
   - name: "github-actions-workflows"
@@ -59,14 +59,15 @@ usage: |-
       context:
         runs-on: ubuntu-latest
         steps:
-          - name: Example action
-            uses: cloudposse/example-github-action-composite@main
+          - name: Atmos Affected Stacks Trigger Spacelift
+            uses: cloudposse/github-action-atmos-affected-trigger-spacelift@main
             id: example
             with:
-              param1: true
-  
-        outputs:
-          result: ${{ steps.example.outputs.result1 }}
+              atmos-config-path: ./rootfs/usr/local/etc/atmos
+              github-token: ${{ secrets.GITHUB_TOKEN }}
+              spacelift-endpoint: https://unicorn.app.spacelift.io
+              spacelift-api-key-id: ${{ secrets.SPACELIFT_API_KEY_ID }}
+              spacelift-api-key-secret: ${{ secrets.SPACELIFT_API_KEY_SECRET }}
   ```
 
 include:
@@ -74,5 +75,5 @@ include:
 
 # Contributors to this project
 contributors:
-  - name: "Igor Rodionov"
-    github: "goruha"
+  - name: "Matt Calhoun"
+    github: "mcalhoun"
