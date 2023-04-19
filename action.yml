@@ -77,7 +77,7 @@ runs:
 
     - name: Atmos Affected Stacks
       id: affected-stacks
-      uses: cloudposse/github-action-atmos-affected-stacks@bug/fix-github-path
+      uses: cloudposse/github-action-atmos-affected-stacks@0.2.0
       with:
         default-branch: ${{inputs.default-branch}}
         head-ref: ${{inputs.head-ref}}
