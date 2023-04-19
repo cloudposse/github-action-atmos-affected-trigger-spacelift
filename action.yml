@@ -94,7 +94,7 @@ runs:
       if: ${{ inputs.install-spacectl == 'true' }}
       uses: spacelift-io/setup-spacectl@v0.3.0
       env:
-        GITHUB_TOKEN: github-token
+        GITHUB_TOKEN: ${{inputs.github-token}}
       with:
         version: ${{inputs.spacectl-version}}
 
