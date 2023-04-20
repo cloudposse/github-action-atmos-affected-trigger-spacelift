@@ -1,9 +1,9 @@
-name: 'Atmos Affected Stacks Trigger Spacelift'
-description: 'A GitHub action to trigger the corresponding Spacelift Stack from atmos describe affected'
+name: "Atmos Affected Stacks Trigger Spacelift"
+description: "A GitHub action to trigger the corresponding Spacelift Stack from atmos describe affected"
 author: hello@cloudposse.com
 branding:
-  icon: 'file'
-  color: 'white'
+  icon: "file"
+  color: "white"
 inputs:
   spacelift-endpoint:
     required: true
@@ -77,7 +77,7 @@ runs:
 
     - name: Atmos Affected Stacks
       id: affected-stacks
-      uses: cloudposse/github-action-atmos-affected-stacks@0.2.0
+      uses: cloudposse/github-action-atmos-affected-stacks@bug/fix-node-requirement-in-atmos
       with:
         default-branch: ${{inputs.default-branch}}
         head-ref: ${{inputs.head-ref}}
@@ -110,4 +110,3 @@ runs:
           spacectl_deploy="true"
         fi
         ./scripts/spacelift-trigger-affected-stacks.sh ${{ steps.affected-stacks.outputs.affected }} $spacectl_deploy
-
