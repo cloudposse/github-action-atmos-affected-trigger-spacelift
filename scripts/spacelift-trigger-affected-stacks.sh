@@ -13,8 +13,8 @@ success_stacks=()
 # Use jq to extract the spacelift_stack values and iterate through them
 for spacelift_stack in $(echo "$affected_stacks" | jq -r '.[].spacelift_stack'); do
   # Run the spacectl command, capture the error message, and store the exit status
-  echo "running spacectl stack \"$spacectl_command\" --id \"$spacelift_stack\" --sha \"$GITHUB_SHA\""
-  error_message=$(spacectl stack "$spacectl_command" --id "$spacelift_stack" --sha "$GITHUB_SHA" 2>&1)
+  echo "running spacectl stack $spacectl_command --id \"$spacelift_stack\" --sha \"$TRIGGERING_SHA\""
+  error_message=$(spacectl stack $spacectl_command --id "$spacelift_stack" --sha "$TRIGGERING_SHA" 2>&1)
   exit_status=$?
 
   if [ $exit_status -ne 0 ]; then
