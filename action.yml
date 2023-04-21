@@ -104,7 +104,7 @@ runs:
         SPACELIFT_API_KEY_ENDPOINT: ${{inputs.spacelift-endpoint}}
         SPACELIFT_API_KEY_ID: ${{ inputs.spacelift-api-key-id }}
         SPACELIFT_API_KEY_SECRET: ${{ inputs.spacelift-api-key-secret }}
-        TRIGGERING_SHA: ${{ github.event.pull_request.head.sha || $GITHUB_SHA}}
+        TRIGGERING_SHA: ${{ github.event.pull_request.head.sha || github.sha}}
       run: |
         spacectl_deploy="false"
         if [ "${{inputs.deploy}}" = "true" ]; then
