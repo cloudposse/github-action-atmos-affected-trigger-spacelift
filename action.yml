@@ -1,23 +1,112 @@
-name: 'Example composite GitHub action'
-description: 'Example composite GitHub action'
+name: "Atmos Affected Stacks Trigger Spacelift"
+description: "A GitHub action to trigger the corresponding Spacelift Stack from `atmos describe affected`"
 author: hello@cloudposse.com
 branding:
-  icon: 'file'
-  color: 'white'
+  icon: "file"
+  color: "white"
 inputs:
-  param1:
+  spacelift-endpoint:
     required: true
-    description: "Input parameter placeholder"
+    description: "The Spacelift endpoint. For example, https://unicorn.app.spacelift.io"
+  spacelift-api-key-id:
+    required: true
+    description: The SPACELIFT_API_KEY_ID
+  spacelift-api-key-secret:
+    required: true
+    description: The SPACELIFT_API_KEY_SECRET
+  github-token:
+    required: true
+    description: A GitHub token for running the spacelift-io/setup-spacectl action
+  deploy:
+    default: "false"
+    description: A flag to indicate if a deployment should be triggered. If false, a preview will be triggered.
+  default-branch:
+    description: The default branch to use for the base ref.
+    required: false
+    default: ${{ github.event.repository.default_branch }}
+  head-ref:
+    description: The head ref to checkout. If not provided, the head default branch is used.
+    required: false
+  install-atmos:
+    description: Whether to install atmos
+    required: false
     default: "true"
-outputs:
-  result1:
-    description: "Output result placeholder"
-    value: "${{ steps.context.outputs.action-result }}"
+  atmos-version:
+    description: The version of atmos to install if install-atmos is true
+    required: false
+    default: "latest"
+  atmos-config-path:
+    description: A path to the folder where atmos.yaml is located
+    required: false
+    default: .
+  install-spacectl:
+    description: Whether to install spacectl
+    required: false
+    default: "true"
+  spacectl-version:
+    description: The version of spacectl to install if install-spacectl is true
+    required: false
+    default: "latest"
+  install-terraform:
+    description: Whether to install terraform
+    required: false
+    default: "true"
+  terraform-version:
+    description: The version of terraform to install if install-terraform is true
+    required: false
+    default: "latest"
+  install-jq:
+    description: Whether to install jq
+    required: false
+    default: "false"
+  jq-version:
+    description: The version of jq to install if install-jq is true
+    required: false
+    default: "1.6"
+  jq-force:
+    description: Whether to force the installation of jq
+    required: false
+    default: "true"
+
 runs:
   using: "composite"
   steps:
-    - id: context
-      shell: bash
-      run: |
-          echo "::set-output name=action-result::${{ inputs.param1 }}"
+    - name: Checkout code
+      uses: actions/checkout@v3
 
+    - name: Atmos Affected Stacks
+      id: affected-stacks
+      uses: cloudposse/github-action-atmos-affected-stacks@bug/fix-node-requirement-in-atmos
+      with:
+        default-branch: ${{inputs.default-branch}}
+        head-ref: ${{inputs.head-ref}}
+        install-atmos: ${{inputs.install-atmos}}
+        atmos-version: ${{inputs.atmos-version}}
+        atmos-config-path: ${{inputs.atmos-config-path}}
+        install-terraform: ${{inputs.install-terraform}}
+        terraform-version: ${{inputs.terraform-version}}
+        install-jq: ${{inputs.install-jq}}
+        jq-version: ${{inputs.jq-version}}
+        jq-force: ${{inputs.jq-force}}
+
+    - name: Setup Spacectl
+      if: ${{ inputs.install-spacectl == 'true' }}
+      uses: spacelift-io/setup-spacectl@v0.3.0
+      env:
+        GITHUB_TOKEN: ${{inputs.github-token}}
+      with:
+        version: ${{inputs.spacectl-version}}
+
+    - name: Trigger Spacelift Stacks
+      shell: bash
+      env:
+        SPACELIFT_API_KEY_ENDPOINT: ${{inputs.spacelift-endpoint}}
+        SPACELIFT_API_KEY_ID: ${{ inputs.spacelift-api-key-id }}
+        SPACELIFT_API_KEY_SECRET: ${{ inputs.spacelift-api-key-secret }}
+        TRIGGERING_SHA: ${{ github.event.pull_request.head.sha || github.sha}}
+      run: |
+        spacectl_deploy="false"
+        if [ "${{inputs.deploy}}" = "true" ]; then
+          spacectl_deploy="true"
+        fi
+        ${GITHUB_ACTION_PATH}/scripts/spacelift-trigger-affected-stacks.sh ${{ steps.affected-stacks.outputs.affected }} $spacectl_deploy
