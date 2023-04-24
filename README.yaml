@@ -33,7 +33,7 @@ badges:
 related: []
 
 # Short description of this project
-description: GitHub Action for Triggering Spacelift Stacks Based on Atmos Affected Stacks
+description: GitHub Action for Triggering Affected Spacelift Stacks
 
 introduction: |-
   This repo contains a GitHub Action that determines the affected [Atmos](https://atmos.tools) stacks for a PR, then
