@@ -30,7 +30,7 @@
 
 -->
 
-GitHub Actions for Triggering Spacelift Stacks
+GitHub Action for Triggering Affected Spacelift Stacks
 
 ---
 
@@ -60,7 +60,8 @@ It's 100% Open Source and licensed under the [APACHE2](LICENSE).
 
 ## Introduction
 
-This repo contains a GitHub Action that determines the affected [Atmos](https://atmos.tools) stacks for a PR, then triggers the corresponding Spacelift stacks.
+This repo contains a GitHub Action that determines the affected [Atmos](https://atmos.tools) stacks for a PR, then
+triggers the corresponding spacelift stacks.
 
 
 
@@ -106,7 +107,7 @@ This repo contains a GitHub Action that determines the affected [Atmos](https://
 | atmos-config-path | A path to the folder where atmos.yaml is located | . | false |
 | atmos-version | The version of atmos to install if install-atmos is true | latest | false |
 | default-branch | The default branch to use for the base ref. | ${{ github.event.repository.default\_branch }} | false |
-| deploy | A flag to indicate if a deployment should be trigged. If false, a preview will be triggered. | false | true |
+| deploy | A flag to indicate if a deployment should be triggered. If false, a preview will be triggered. | false | false |
 | github-token | A GitHub token for running the spacelift-io/setup-spacectl action | N/A | true |
 | head-ref | The head ref to checkout. If not provided, the head default branch is used. | N/A | false |
 | install-atmos | Whether to install atmos | true | false |
