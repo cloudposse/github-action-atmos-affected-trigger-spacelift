@@ -1,5 +1,5 @@
 name: "Atmos Affected Stacks Trigger Spacelift"
-description: "A GitHub action to trigger the corresponding Spacelift Stack from atmos describe affected"
+description: "A GitHub action to trigger the corresponding Spacelift Stack from `atmos describe affected`"
 author: hello@cloudposse.com
 branding:
   icon: "file"
@@ -19,7 +19,7 @@ inputs:
     description: A GitHub token for running the spacelift-io/setup-spacectl action
   deploy:
     default: "false"
-    description: A flag to indicate if a deployment should be trigged. If false, a preview will be triggered.
+    description: A flag to indicate if a deployment should be triggered. If false, a preview will be triggered.
   default-branch:
     description: The default branch to use for the base ref.
     required: false
