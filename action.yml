@@ -18,7 +18,6 @@ inputs:
     required: true
     description: A GitHub token for running the spacelift-io/setup-spacectl action
   deploy:
-    required: true
     default: "false"
     description: A flag to indicate if a deployment should be trigged. If false, a preview will be triggered.
   default-branch:
