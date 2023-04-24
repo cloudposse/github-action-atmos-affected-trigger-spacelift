@@ -60,7 +60,7 @@ It's 100% Open Source and licensed under the [APACHE2](LICENSE).
 
 ## Introduction
 
-This repo contains a GitHub Action that determines the affected atmos stacks for a PR, then triggers the corresponding spacelift stacks.
+This repo contains a GitHub Action that determines the affected [Atmos](https://atmos.tools) stacks for a PR, then triggers the corresponding Spacelift stacks.
 
 
 
