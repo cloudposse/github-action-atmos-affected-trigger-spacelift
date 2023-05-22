@@ -12,7 +12,7 @@ success_stacks=()
 total_duration=0
 
 # Use jq to extract the spacelift_stack values and iterate through them
-for spacelift_stack in $(jq -r '.[].spacelift_stack' < "./affected-stacks.json"); do
+for spacelift_stack in $(jq -r '.[].spacelift_stack' < "./affected-stacks.json" | grep -v null); do
   start_time=$(date +%s%N)  # Get the start time in nanoseconds
 
   # Run the spacectl command, capture the error message, and store the exit status
