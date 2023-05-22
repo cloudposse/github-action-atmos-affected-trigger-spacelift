@@ -2,7 +2,7 @@
 
 spacectl_command="preview"
 
-if [ "$2" = "true" ]; then
+if [ "$1" = "true" ]; then
   spacectl_command="deploy"
 fi
 
