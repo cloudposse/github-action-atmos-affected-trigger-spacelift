@@ -109,4 +109,6 @@ runs:
         if [ "${{inputs.deploy}}" = "true" ]; then
           spacectl_deploy="true"
         fi
-        ${GITHUB_ACTION_PATH}/scripts/spacelift-trigger-affected-stacks.sh ${{ steps.affected-stacks.outputs.affected }} $spacectl_deploy
+        printf '%s\n' "${{ steps.affected-stacks.outputs.affected }}" >affected-stacks.json
+        ${GITHUB_ACTION_PATH}/scripts/spacelift-trigger-affected-stacks.sh $spacectl_deploy
+        rm -f affected-stacks.json
