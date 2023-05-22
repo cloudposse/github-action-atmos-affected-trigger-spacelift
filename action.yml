@@ -76,7 +76,7 @@ runs:
 
     - name: Atmos Affected Stacks
       id: affected-stacks
-      uses: cloudposse/github-action-atmos-affected-stacks@bug/fix-node-requirement-in-atmos
+      uses: cloudposse/github-action-atmos-affected-stacks@v1.0.0
       with:
         default-branch: ${{inputs.default-branch}}
         head-ref: ${{inputs.head-ref}}
@@ -109,9 +109,5 @@ runs:
         if [ "${{inputs.deploy}}" = "true" ]; then
           spacectl_deploy="true"
         fi
-        affected="${{ steps.affected-stacks.outputs.affected }}"
-        affected="${affected#\'}"
-        affected="${affected%\'}"
-        printf "%s\n" "$affected" >affected-stacks.json
+        printf "%s\n" "${{ steps.affected-stacks.outputs.affected }}" >affected-stacks.json
         ${GITHUB_ACTION_PATH}/scripts/spacelift-trigger-affected-stacks.sh $spacectl_deploy
-        rm -f affected-stacks.json
