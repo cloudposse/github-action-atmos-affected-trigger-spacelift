@@ -13,4 +13,4 @@ for spacelift_stack in $(jq -r '.[].spacelift_stack' < "affected-stacks.json" | 
   body="$body\n/spacelift $spacectl_command $spacelift_stack"
 done
 
-echo -e "$body"
+echo "$body"
