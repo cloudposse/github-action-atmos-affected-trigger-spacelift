@@ -135,6 +135,7 @@ runs:
       if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.trigger-method == 'comment' }}
       with:
         header: atmos-affected-stacks
+        recreate: true
         message: |
           ${{ steps.create-pr-comment-body.outputs.body }}
       env:
