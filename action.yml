@@ -137,4 +137,6 @@ runs:
         header: atmos-affected-stacks
         message: |
           ${{ steps.create-pr-comment-body.outputs.body }}
+      env:
+        GITHUB_TOKEN: ${{inputs.github-token}}
 
