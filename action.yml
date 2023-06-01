@@ -56,13 +56,13 @@ inputs:
     required: false
   spacelift-api-key-id:
     description: The SPACELIFT_API_KEY_ID
-    required: true
+    required: false
   spacelift-api-key-secret:
     description: The SPACELIFT_API_KEY_SECRET
-    required: true
+    required: false
   spacelift-endpoint:
     description: The Spacelift endpoint. For example, https://unicorn.app.spacelift.io
-    required: true
+    required: false
   terraform-version:
     default: latest
     description: The version of terraform to install if install-terraform is true
