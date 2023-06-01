@@ -136,7 +136,7 @@ runs:
       with:
         header: atmos-affected-stacks
         recreate: true
-        message-file: comment-body.txt
+        path: comment-body.txt
       env:
         GITHUB_TOKEN: ${{inputs.github-token}}
 
