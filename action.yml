@@ -5,68 +5,72 @@ branding:
   icon: "file"
   color: "white"
 inputs:
-  spacelift-endpoint:
-    required: true
-    description: "The Spacelift endpoint. For example, https://unicorn.app.spacelift.io"
-  spacelift-api-key-id:
-    required: true
-    description: The SPACELIFT_API_KEY_ID
-  spacelift-api-key-secret:
-    required: true
-    description: The SPACELIFT_API_KEY_SECRET
-  github-token:
-    required: true
-    description: A GitHub token for running the spacelift-io/setup-spacectl action
-  deploy:
-    default: "false"
-    description: A flag to indicate if a deployment should be triggered. If false, a preview will be triggered.
+  atmos-config-path:
+    default: .
+    description: A path to the folder where atmos.yaml is located
+    required: false
+  atmos-version:
+    default: latest
+    description: The version of atmos to install if install-atmos is true
+    required: false
   default-branch:
+    default: ${{ github.event.repository.default_branch }}
     description: The default branch to use for the base ref.
     required: false
-    default: ${{ github.event.repository.default_branch }}
+  deploy:
+    default: 'false'
+    description: A flag to indicate if a deployment should be triggered. If false, a preview will be triggered.
+  github-token:
+    description: A GitHub token for running the spacelift-io/setup-spacectl action
+    required: true
   head-ref:
     description: The head ref to checkout. If not provided, the head default branch is used.
     required: false
   install-atmos:
+    default: 'true'
     description: Whether to install atmos
     required: false
-    default: "true"
-  atmos-version:
-    description: The version of atmos to install if install-atmos is true
-    required: false
-    default: "latest"
-  atmos-config-path:
-    description: A path to the folder where atmos.yaml is located
-    required: false
-    default: .
-  install-spacectl:
-    description: Whether to install spacectl
-    required: false
-    default: "true"
-  spacectl-version:
-    description: The version of spacectl to install if install-spacectl is true
-    required: false
-    default: "latest"
-  install-terraform:
-    description: Whether to install terraform
-    required: false
-    default: "true"
-  terraform-version:
-    description: The version of terraform to install if install-terraform is true
-    required: false
-    default: "latest"
   install-jq:
+    default: 'false'
     description: Whether to install jq
     required: false
-    default: "false"
-  jq-version:
-    description: The version of jq to install if install-jq is true
+  install-spacectl:
+    default: 'true'
+    description: Whether to install spacectl
     required: false
-    default: "1.6"
+  install-terraform:
+    default: 'true'
+    description: Whether to install terraform
+    required: false
   jq-force:
+    default: 'true'
     description: Whether to force the installation of jq
     required: false
-    default: "true"
+  jq-version:
+    default: '1.6'
+    description: The version of jq to install if install-jq is true
+    required: false
+  spacectl-version:
+    default: latest
+    description: The version of spacectl to install if install-spacectl is true
+    required: false
+  spacelift-api-key-id:
+    description: The SPACELIFT_API_KEY_ID
+    required: true
+  spacelift-api-key-secret:
+    description: The SPACELIFT_API_KEY_SECRET
+    required: true
+  spacelift-endpoint:
+    description: The Spacelift endpoint. For example, https://unicorn.app.spacelift.io
+    required: true
+  terraform-version:
+    default: latest
+    description: The version of terraform to install if install-terraform is true
+    required: false
+  trigger-method:
+    default: 'comment'
+    description: The method to use to trigger the Spacelift stack. Valid values are `comment` and `spacectl`
+    required: false
 
 runs:
   using: "composite"
@@ -90,14 +94,15 @@ runs:
         jq-force: ${{inputs.jq-force}}
 
     - name: Setup Spacectl
-      if: ${{ inputs.install-spacectl == 'true' }}
+      if: ${{ inputs.install-spacectl == 'true' && inputs.trigger-method == 'spacectl' }}
       uses: spacelift-io/setup-spacectl@v0.3.0
       env:
         GITHUB_TOKEN: ${{inputs.github-token}}
       with:
         version: ${{inputs.spacectl-version}}
 
-    - name: Trigger Spacelift Stacks
+    - name: Trigger Spacelift Stacks with Spacectl
+      if: ${{ inputs.trigger-method == 'spacectl' }}
       shell: bash
       env:
         SPACELIFT_API_KEY_ENDPOINT: ${{inputs.spacelift-endpoint}}
@@ -111,3 +116,25 @@ runs:
         fi
         printf "%s\n" '${{ steps.affected-stacks.outputs.affected }}' >affected-stacks.json
         ${GITHUB_ACTION_PATH}/scripts/spacelift-trigger-affected-stacks.sh $spacectl_deploy
+
+    - name: Create PR Comment Body with Affected Stacks
+      if: ${{ inputs.trigger-method == 'comment' }}
+      id: create-pr-comment-body
+      shell: bash
+      run: |
+        spacectl_deploy="false"
+        if [ "${{inputs.deploy}}" = "true" ]; then
+          spacectl_deploy="true"
+        fi
+        printf "%s\n" '${{ steps.affected-stacks.outputs.affected }}' >affected-stacks.json
+        body=$(${GITHUB_ACTION_PATH}/scripts/spacelift-generate-pr-comment-body.sh $spacectl_deploy)
+        printf "body=%s" "$body" >>$GITHUB_OUTPUT
+
+    - name: Create PR Comment with Affected Stacks
+      uses: marocchino/sticky-pull-request-comment@f61b6cf21ef2fcc468f4345cdfcc9bda741d2343 # v2.6.2
+      if: ${{ inputs.trigger-method == 'comment' }}
+      with:
+        header: atmos-affected-stacks
+        message: |
+          ${{ steps.create-pr-comment-body.outputs.body }}
+
