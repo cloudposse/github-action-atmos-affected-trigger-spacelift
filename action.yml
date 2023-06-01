@@ -94,7 +94,7 @@ runs:
         jq-force: ${{inputs.jq-force}}
 
     - name: Setup Spacectl
-      if: ${{ steps.affected-stacks.outputs.has-affected-stack == 'true' && inputs.install-spacectl == 'true' && inputs.trigger-method == 'spacectl' }}
+      if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.install-spacectl == 'true' && inputs.trigger-method == 'spacectl' }}
       uses: spacelift-io/setup-spacectl@v0.3.0
       env:
         GITHUB_TOKEN: ${{inputs.github-token}}
@@ -102,7 +102,7 @@ runs:
         version: ${{inputs.spacectl-version}}
 
     - name: Trigger Spacelift Stacks with Spacectl
-      if: ${{ steps.affected-stacks.outputs.has-affected-stack == 'true' && inputs.trigger-method == 'spacectl' }}
+      if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.trigger-method == 'spacectl' }}
       shell: bash
       env:
         SPACELIFT_API_KEY_ENDPOINT: ${{inputs.spacelift-endpoint}}
@@ -118,7 +118,7 @@ runs:
         ${GITHUB_ACTION_PATH}/scripts/spacelift-trigger-affected-stacks.sh $spacectl_deploy
 
     - name: Create PR Comment Body with Affected Stacks
-      if: ${{ steps.affected-stacks.outputs.has-affected-stack == 'true' && inputs.trigger-method == 'comment' }}
+      if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.trigger-method == 'comment' }}
       id: create-pr-comment-body
       shell: bash
       run: |
@@ -132,7 +132,7 @@ runs:
 
     - name: Create PR Comment with Affected Stacks
       uses: marocchino/sticky-pull-request-comment@f61b6cf21ef2fcc468f4345cdfcc9bda741d2343 # v2.6.2
-      if: ${{ steps.affected-stacks.outputs.has-affected-stack == 'true' && inputs.trigger-method == 'comment' }}
+      if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.trigger-method == 'comment' }}
       with:
         header: atmos-affected-stacks
         message: |
