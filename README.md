@@ -61,7 +61,10 @@ It's 100% Open Source and licensed under the [APACHE2](LICENSE).
 ## Introduction
 
 This repo contains a GitHub Action that determines the affected [Atmos](https://atmos.tools) stacks for a PR, then
-triggers the corresponding spacelift stacks.
+creates a comment on the PR which Spacelift can use to trigger the corresponding stacks via a push policy.
+
+Optionally, you can use the `spacectl` trigger method, which uses the `spacectl` CLI to trigger the corresponding
+spacelift stacks directly rather than via comment/push policy.
 
 
 
@@ -82,15 +85,24 @@ triggers the corresponding spacelift stacks.
     context:
       runs-on: ubuntu-latest
       steps:
-        - name: Atmos Affected Stacks Trigger Spacelift
+        - name: Atmos Affected Stacks Trigger Spacelift (via comment)
           uses: cloudposse/github-action-atmos-affected-trigger-spacelift@main
           id: example
           with:
             atmos-config-path: ./rootfs/usr/local/etc/atmos
             github-token: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Atmos Affected Stacks Trigger Spacelift (direct)
+          uses: cloudposse/github-action-atmos-affected-trigger-spacelift@main
+          id: example
+          with:
+            atmos-config-path: ./rootfs/usr/local/etc/atmos
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            trigger-method: spacectl
             spacelift-endpoint: https://unicorn.app.spacelift.io
             spacelift-api-key-id: ${{ secrets.SPACELIFT_API_KEY_ID }}
             spacelift-api-key-secret: ${{ secrets.SPACELIFT_API_KEY_SECRET }}
+
 ```
 
 
@@ -117,10 +129,11 @@ triggers the corresponding spacelift stacks.
 | jq-force | Whether to force the installation of jq | true | false |
 | jq-version | The version of jq to install if install-jq is true | 1.6 | false |
 | spacectl-version | The version of spacectl to install if install-spacectl is true | latest | false |
-| spacelift-api-key-id | The SPACELIFT\_API\_KEY\_ID | N/A | true |
-| spacelift-api-key-secret | The SPACELIFT\_API\_KEY\_SECRET | N/A | true |
-| spacelift-endpoint | The Spacelift endpoint. For example, https://unicorn.app.spacelift.io | N/A | true |
+| spacelift-api-key-id | The SPACELIFT\_API\_KEY\_ID | N/A | false |
+| spacelift-api-key-secret | The SPACELIFT\_API\_KEY\_SECRET | N/A | false |
+| spacelift-endpoint | The Spacelift endpoint. For example, https://unicorn.app.spacelift.io | N/A | false |
 | terraform-version | The version of terraform to install if install-terraform is true | latest | false |
+| trigger-method | The method to use to trigger the Spacelift stack. Valid values are `comment` and `spacectl` | comment | false |
 
 
 <!-- markdownlint-restore -->

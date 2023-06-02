@@ -17,10 +17,11 @@
 | jq-force | Whether to force the installation of jq | true | false |
 | jq-version | The version of jq to install if install-jq is true | 1.6 | false |
 | spacectl-version | The version of spacectl to install if install-spacectl is true | latest | false |
-| spacelift-api-key-id | The SPACELIFT\_API\_KEY\_ID | N/A | true |
-| spacelift-api-key-secret | The SPACELIFT\_API\_KEY\_SECRET | N/A | true |
-| spacelift-endpoint | The Spacelift endpoint. For example, https://unicorn.app.spacelift.io | N/A | true |
+| spacelift-api-key-id | The SPACELIFT\_API\_KEY\_ID | N/A | false |
+| spacelift-api-key-secret | The SPACELIFT\_API\_KEY\_SECRET | N/A | false |
+| spacelift-endpoint | The Spacelift endpoint. For example, https://unicorn.app.spacelift.io | N/A | false |
 | terraform-version | The version of terraform to install if install-terraform is true | latest | false |
+| trigger-method | The method to use to trigger the Spacelift stack. Valid values are `comment` and `spacectl` | comment | false |
 
 
 <!-- markdownlint-restore -->
