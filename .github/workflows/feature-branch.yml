@@ -13,3 +13,11 @@ jobs:
       ref: "${{ github.event.pull_request.head.ref  }}"
     secrets:
       github-private-actions-pat: "${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}"
+
+  major-release-tagger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: cloudposse/github-action-major-release-tagger@v1
+        with:
+          log-level: 'debug'
+          dry-run: 'true'
