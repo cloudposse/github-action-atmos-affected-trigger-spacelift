@@ -10,6 +10,3 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: cloudposse/github-action-major-release-tagger@v1
-        with:
-          log-level: 'debug'
-          dry-run: true
