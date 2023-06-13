@@ -148,6 +148,6 @@ runs:
       with:
         header: atmos-affected-stacks
         only_update: true
-        path: hide-comment-body.sh
+        path: hidden-comment-body.txt
       env:
         GITHUB_TOKEN: ${{inputs.github-token}}
