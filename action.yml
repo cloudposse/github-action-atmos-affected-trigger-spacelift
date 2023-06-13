@@ -130,6 +130,8 @@ runs:
         body=$(${GITHUB_ACTION_PATH}/scripts/spacelift-generate-pr-comment-body.sh $spacectl_deploy)
         printf "body=%s" "$body" >>$GITHUB_OUTPUT
 
+        ${GITHUB_ACTION_PATH}/scripts/hide-comment-body.sh
+
     - name: Create PR Comment with Affected Stacks
       uses: marocchino/sticky-pull-request-comment@f61b6cf21ef2fcc468f4345cdfcc9bda741d2343 # v2.6.2
       if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.trigger-method == 'comment' }}
@@ -145,6 +147,7 @@ runs:
       if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.trigger-method == 'comment' }}
       with:
         header: atmos-affected-stacks
+        only_update: true
         path: hide-comment-body.sh
       env:
         GITHUB_TOKEN: ${{inputs.github-token}}
