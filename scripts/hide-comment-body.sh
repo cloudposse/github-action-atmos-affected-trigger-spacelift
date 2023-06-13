@@ -7,6 +7,6 @@ echo '<details><summary>Spacelift runs</summary>
 
 cat comment-body.txt >> hidden-comment-body.txt
 
-echo '
-```
+echo '```
+
 </details>' >> hidden-comment-body.txt
