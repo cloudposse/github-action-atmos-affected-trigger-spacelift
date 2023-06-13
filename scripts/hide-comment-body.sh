@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 echo '<details><summary>Spacelift runs</summary>
+
 ```
 ' > hidden-comment-body.txt
 
