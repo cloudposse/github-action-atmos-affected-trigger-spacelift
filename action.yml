@@ -145,7 +145,6 @@ runs:
       if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.trigger-method == 'comment' }}
       with:
         header: atmos-affected-stacks
-        only_update: true
         path: hide-comment-body.sh
       env:
         GITHUB_TOKEN: ${{inputs.github-token}}
