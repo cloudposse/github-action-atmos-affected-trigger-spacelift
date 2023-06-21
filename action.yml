@@ -127,9 +127,7 @@ runs:
           spacectl_deploy="true"
         fi
         printf "%s\n" '${{ steps.affected-stacks.outputs.affected }}' >affected-stacks.json
-        body=$(${GITHUB_ACTION_PATH}/scripts/spacelift-generate-pr-comment-body.sh $spacectl_deploy)
-        stack_count=$(cat comment-body.txt|wc -l)
-        printf "body=<details><summary>Spacelift Triggered Stacks (%s)</summary>%s</details>" "$stack_count" "$body" >>$GITHUB_OUTPUT
+        ${GITHUB_ACTION_PATH}/scripts/spacelift-generate-pr-comment-body.sh $spacectl_deploy
 
     - name: Create PR Comment with Affected Stacks
       uses: marocchino/sticky-pull-request-comment@f61b6cf21ef2fcc468f4345cdfcc9bda741d2343 # v2.6.2
