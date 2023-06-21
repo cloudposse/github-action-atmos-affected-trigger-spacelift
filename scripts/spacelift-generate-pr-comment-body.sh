@@ -15,4 +15,4 @@ done
 
 printf "</details>\n" >> "comment-body.txt"
 
-sed -i "1 i\<details><summary>Spacelift Triggered Stacks ($stack_count)</summary>" comment-body.txt
+sed -i "1 i\<details><summary>Spacelift Triggered Stacks ($stack_count)</summary>\n\n" comment-body.txt
