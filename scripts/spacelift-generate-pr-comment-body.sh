@@ -13,6 +13,6 @@ for spacelift_stack in $(jq -r '.[].spacelift_stack' < "affected-stacks.json" | 
   stack_count=$((stack_count+1))
 done
 
+# Wrap the contents in a collapsible details block
+sed -i "1 i\<details><summary>Spacelift Triggered Stacks ($stack_count)</summary>" comment-body.txt
 printf "</details>\n" >> "comment-body.txt"
-
-sed -i "1 i\<details><summary>Spacelift Triggered Stacks ($stack_count)</summary>\n\n" comment-body.txt
