@@ -14,5 +14,7 @@ for spacelift_stack in $(jq -r '.[].spacelift_stack' < "affected-stacks.json" | 
 done
 
 # Wrap the contents in a collapsible details block
-sed -i "1 i\<details><summary>Spacelift Triggered Stacks ($stack_count)</summary>" comment-body.txt
-printf "</details>\n" >> "comment-body.txt"
+if [[ $stack_count -gt 0 ]]; then
+  sed -i "1 i\<details><summary>Spacelift Triggered Stacks ($stack_count)</summary>\n" comment-body.txt
+  printf "</details>\n" >> "comment-body.txt"
+fi

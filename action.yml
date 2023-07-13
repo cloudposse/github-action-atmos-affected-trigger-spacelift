@@ -128,10 +128,16 @@ runs:
         fi
         printf "%s\n" '${{ steps.affected-stacks.outputs.affected }}' >affected-stacks.json
         ${GITHUB_ACTION_PATH}/scripts/spacelift-generate-pr-comment-body.sh $spacectl_deploy
+        # Check if comment body is empty (when all affected stacks have spacelift workspace disabled)
+        if [ -s comment-body.txt ]; then
+          echo "affected-stacks-enabled=true" >> $GITHUB_OUTPUT
+        else
+          echo "affected-stacks-enabled=false" >> $GITHUB_OUTPUT
+        fi
 
     - name: Create PR Comment with Affected Stacks
       uses: marocchino/sticky-pull-request-comment@f61b6cf21ef2fcc468f4345cdfcc9bda741d2343 # v2.6.2
-      if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.trigger-method == 'comment' }}
+      if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.trigger-method == 'comment' && fromJSON(steps.create-pr-comment-body.outputs.affected-stacks-enabled) }}
       with:
         header: atmos-affected-stacks
         recreate: true
