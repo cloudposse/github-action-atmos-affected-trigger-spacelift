@@ -15,6 +15,6 @@ done
 
 # Wrap the contents in a collapsible details block
 if [[ $stack_count -gt 0 ]]; then
-  sed -i "1 i\<details><summary>Spacelift Triggered Stacks ($stack_count)</summary>\n" comment-body.txt
+  sed -i "1 i\/spacelift summary\n\n<details><summary>Spacelift Triggered Stacks ($stack_count)</summary>\n\n" comment-body.txt
   printf "</details>\n" >> "comment-body.txt"
 fi

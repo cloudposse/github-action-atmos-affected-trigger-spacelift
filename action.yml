@@ -144,4 +144,3 @@ runs:
         path: comment-body.txt
       env:
         GITHUB_TOKEN: ${{inputs.github-token}}
-
