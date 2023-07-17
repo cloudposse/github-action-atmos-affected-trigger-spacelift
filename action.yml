@@ -87,6 +87,7 @@ runs:
         install-atmos: ${{inputs.install-atmos}}
         atmos-version: ${{inputs.atmos-version}}
         atmos-config-path: ${{inputs.atmos-config-path}}
+        atmos-include-spacelift-admin-stacks: "true"
         install-terraform: ${{inputs.install-terraform}}
         terraform-version: ${{inputs.terraform-version}}
         install-jq: ${{inputs.install-jq}}
