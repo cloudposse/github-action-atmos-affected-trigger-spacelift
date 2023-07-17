@@ -144,13 +144,3 @@ runs:
         path: comment-body.txt
       env:
         GITHUB_TOKEN: ${{inputs.github-token}}
-
-    - name: Hide PR Comment with Affected Stacks
-      uses: marocchino/sticky-pull-request-comment@f61b6cf21ef2fcc468f4345cdfcc9bda741d2343 # v2.6.2
-      if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.trigger-method == 'comment' && fromJSON(steps.create-pr-comment-body.outputs.affected-stacks-enabled) }}
-      with:
-        header: atmos-affected-stacks
-        hide: true
-        hide_classify: "OUTDATED"
-      env:
-        GITHUB_TOKEN: ${{inputs.github-token}}
