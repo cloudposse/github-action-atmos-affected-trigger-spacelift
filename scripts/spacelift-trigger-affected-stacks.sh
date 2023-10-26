@@ -8,6 +8,7 @@ fi
 
 declare -A error_stacks
 success_stacks=()
+uninitialized_stacks=()
 
 total_duration=0
 
@@ -29,8 +30,14 @@ for spacelift_stack in $(jq -r '.[].spacelift_stack' < "affected-stacks.json" | 
   duration_seconds="$seconds.$(printf "%03d" "$milliseconds")"
 
   if [ $exit_status -ne 0 ]; then
-    # If the command failed, add the spacelift_stack and error message to the error_stacks associative array
-    error_stacks["$spacelift_stack"]="$error_message"
+    if [[ $error_message =~ "could not be found" ]]; then
+      # Atmos computed the spacelift stack based on code, not what actually exists in Spacelift.
+      # This is expected until the corresponding infrastructure stack creates the new stack and we don't want the action to fail.
+      uninitialized_stacks+=("$spacelift_stack")
+    else
+      # If the command failed, add the spacelift_stack and error message to the error_stacks associative array
+      error_stacks["$spacelift_stack"]="$error_message"
+    fi
   else
     # If the command succeeded, add the spacelift_stack to the success_stacks array
     success_stacks+=("$spacelift_stack")
@@ -57,6 +64,15 @@ else
 fi
 
 echo "Total Duration: $total_duration_seconds seconds"
+echo
+
+# Output the list of uninitialized stacks, if any
+if [ ${#uninitialized_stacks[@]} -gt 0 ]; then
+  printf "The following stacks have not been created. Confirm that related <tenant>-infrastructure stack runs will create these stacks:\n\n"
+  for stack in "${uninitialized_stacks[@]}"; do
+    echo "- $stack"
+  done
+fi
 
 if [ ${#error_stacks[@]} -eq 0 ]; then
   # Exit with 0 if there are no errors
