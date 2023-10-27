@@ -8,44 +8,46 @@ fi
 
 declare -A error_stacks
 success_stacks=()
-uninitialized_stacks=()
+initial_start_time=$(date +%s%N)
 
-total_duration=0
+EXISTING_STACKS=$(spacectl stack list | cut -d '|' -f 2)
+
+initial_end_time=$(date +%s%N)
+total_duration=$((initial_end_time - initial_start_time))
 
 # Use jq to extract the spacelift_stack values and iterate through them
 for spacelift_stack in $(jq -r '.[].spacelift_stack' < "affected-stacks.json" | grep -v null); do
-  start_time=$(date +%s%N)  # Get the start time in nanoseconds
+  if [[ $EXISTING_STACKS =~ "$spacelift_stack" ]]; then
+    start_time=$(date +%s%N)  # Get the start time in nanoseconds
 
-  # Run the spacectl command, capture the error message, and store the exit status
-  echo "Running spacectl stack $spacectl_command --id \"$spacelift_stack\" --sha \"$TRIGGERING_SHA\""
-  error_message=$(spacectl stack $spacectl_command --id "$spacelift_stack" --sha "$TRIGGERING_SHA" 2>&1)
-  exit_status=$?
+    # Run the spacectl command, capture the error message, and store the exit status
+    echo "Running spacectl stack $spacectl_command --id \"$spacelift_stack\" --sha \"$TRIGGERING_SHA\""
+    error_message=$(spacectl stack $spacectl_command --id "$spacelift_stack" --sha "$TRIGGERING_SHA" 2>&1)
+    exit_status=$?
 
-  end_time=$(date +%s%N)  # Get the end time in nanoseconds
-  duration=$((end_time - start_time))  # Calculate the duration in nanoseconds
+    end_time=$(date +%s%N)  # Get the end time in nanoseconds
+    duration=$((end_time - start_time))  # Calculate the duration in nanoseconds
 
-  # Convert the duration to seconds with milliseconds precision
-  seconds=$((duration / 1000000000))
-  milliseconds=$(((duration % 1000000000) / 1000000))
-  duration_seconds="$seconds.$(printf "%03d" "$milliseconds")"
+    # Convert the duration to seconds with milliseconds precision
+    seconds=$((duration / 1000000000))
+    milliseconds=$(((duration % 1000000000) / 1000000))
+    duration_seconds="$seconds.$(printf "%03d" "$milliseconds")"
 
-  if [ $exit_status -ne 0 ]; then
-    if [[ $error_message =~ "could not be found" ]]; then
-      # Atmos computed the spacelift stack based on code, not what actually exists in Spacelift.
-      # This is expected until the corresponding infrastructure stack creates the new stack and we don't want the action to fail.
-      uninitialized_stacks+=("$spacelift_stack")
-    else
+    if [ $exit_status -ne 0 ]; then
       # If the command failed, add the spacelift_stack and error message to the error_stacks associative array
       error_stacks["$spacelift_stack"]="$error_message"
+    else
+      # If the command succeeded, add the spacelift_stack to the success_stacks array
+      success_stacks+=("$spacelift_stack")
     fi
-  else
-    # If the command succeeded, add the spacelift_stack to the success_stacks array
-    success_stacks+=("$spacelift_stack")
-  fi
 
-  echo "Duration: $duration_seconds seconds"
-  echo
-  total_duration=$((total_duration + duration))
+    echo "Duration: $duration_seconds seconds"
+    echo
+    total_duration=$((total_duration + duration))
+  else
+    echo "INFO: $spacelift_stack does not exist. Please confirm there is a corresponding <tenant>-infrastructure run which will create the stack."
+    echo
+  fi
 done
 
 # Convert the total duration to seconds with milliseconds precision
@@ -65,14 +67,6 @@ fi
 
 echo "Total Duration: $total_duration_seconds seconds"
 echo
-
-# Output the list of uninitialized stacks, if any
-if [ ${#uninitialized_stacks[@]} -gt 0 ]; then
-  printf "The following stacks have not been created. Confirm that related <tenant>-infrastructure stack runs will create these stacks:\n\n"
-  for stack in "${uninitialized_stacks[@]}"; do
-    echo "- $stack"
-  done
-fi
 
 if [ ${#error_stacks[@]} -eq 0 ]; then
   # Exit with 0 if there are no errors
