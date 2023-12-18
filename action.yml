@@ -80,7 +80,7 @@ runs:
 
     - name: Atmos Affected Stacks
       id: affected-stacks
-      uses: cloudposse/github-action-atmos-affected-stacks@v1
+      uses: cloudposse/github-action-atmos-affected-stacks@v2
       with:
         default-branch: ${{inputs.default-branch}}
         head-ref: ${{inputs.head-ref}}
