@@ -5,3 +5,4 @@ repository:
   description: A GitHub action to trigger spacelift for all atmos affected stacks
   homepage: https://cloudposse.com/accelerate
   topics: ""
+
