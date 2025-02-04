@@ -74,7 +74,7 @@ inputs:
   skip-atmos-functions:
     required: false
     description: "Skip all Atmos functions such as terraform.output in `atmos describe affected`"
-    default: false
+    default: "false"
 
 runs:
   using: "composite"
