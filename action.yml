@@ -71,6 +71,10 @@ inputs:
     default: 'comment'
     description: The method to use to trigger the Spacelift stack. Valid values are `comment` and `spacectl`
     required: false
+  skip-atmos-functions:
+    required: false
+    description: "Skip all Atmos functions such as terraform.output in `atmos describe affected`"
+    default: "false"
 
 runs:
   using: "composite"
@@ -80,7 +84,7 @@ runs:
 
     - name: Atmos Affected Stacks
       id: affected-stacks
-      uses: cloudposse/github-action-atmos-affected-stacks@v1
+      uses: cloudposse/github-action-atmos-affected-stacks@v6
       with:
         default-branch: ${{inputs.default-branch}}
         head-ref: ${{inputs.head-ref}}
@@ -93,6 +97,7 @@ runs:
         install-jq: ${{inputs.install-jq}}
         jq-version: ${{inputs.jq-version}}
         jq-force: ${{inputs.jq-force}}
+        skip-atmos-functions: ${{inputs.skip-atmos-functions}}
 
     - name: Setup Spacectl
       if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.install-spacectl == 'true' && inputs.trigger-method == 'spacectl' }}
