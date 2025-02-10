@@ -75,6 +75,13 @@ inputs:
     required: false
     description: "Skip all Atmos functions such as terraform.output in `atmos describe affected`"
     default: "false"
+outputs:
+  affected:
+    description: The affected stacks
+    value: ${{ steps.affected-stacks.outputs.affected }}
+  has-affected-stacks:
+    description: Whether there are affected stacks
+    value: ${{ steps.affected-stacks.outputs.has-affected-stacks }}
 
 runs:
   using: "composite"

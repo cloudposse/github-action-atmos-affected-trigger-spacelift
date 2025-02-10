@@ -35,7 +35,6 @@ jobs:
     outputs:
       affected: "${{ steps.current.outputs.affected }}"
       has-affected-stacks: "${{ steps.current.outputs.has-affected-stacks }}"
-      matrix: "${{ steps.current.outputs.matrix }}"
 
   assert:
     runs-on: ubuntu-latest
