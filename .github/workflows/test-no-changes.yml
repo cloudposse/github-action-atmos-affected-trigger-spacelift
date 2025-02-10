@@ -15,12 +15,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: cloudposse-github-actions/install-gh-releases@v1
-        with:
-          cache: true
-          config: |-
-            mikefarah/yq: v4.44.3
-
       # There should be no changes
       - uses: ./
         id: current
