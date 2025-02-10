@@ -38,10 +38,6 @@ inputs:
     default: 'true'
     description: Whether to install spacectl
     required: false
-  install-terraform:
-    default: 'true'
-    description: Whether to install terraform
-    required: false
   jq-force:
     default: 'true'
     description: Whether to force the installation of jq
@@ -62,10 +58,6 @@ inputs:
     required: false
   spacelift-endpoint:
     description: The Spacelift endpoint. For example, https://unicorn.app.spacelift.io
-    required: false
-  terraform-version:
-    default: latest
-    description: The version of terraform to install if install-terraform is true
     required: false
   trigger-method:
     default: 'comment'
@@ -99,8 +91,6 @@ runs:
         atmos-version: ${{inputs.atmos-version}}
         atmos-config-path: ${{inputs.atmos-config-path}}
         atmos-include-spacelift-admin-stacks: "true"
-        install-terraform: ${{inputs.install-terraform}}
-        terraform-version: ${{inputs.terraform-version}}
         install-jq: ${{inputs.install-jq}}
         jq-version: ${{inputs.jq-version}}
         jq-force: ${{inputs.jq-force}}

@@ -1,4 +1,0 @@
-#!/bin/bash
-
-cat "${GITHUB_ACTION_PATH}/tests/fixtures/mock-atmos-describe-affected.json" > affected-stacks.json
-cat ${ATMOS_CLI_CONFIG_PATH}/atmos.yaml | yq e --tojson '.' -
