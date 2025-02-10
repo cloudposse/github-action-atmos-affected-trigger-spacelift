@@ -25,7 +25,7 @@ jobs:
       - uses: ./
         id: current
         with:
-          atmos-config-path: ./tests/atmos.yaml
+          atmos-config-path: ./tests
           install-atmos: true
           # Set both the head and default branch to the PR branch.
           # We intentionally want to validate there are no changes
