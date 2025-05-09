@@ -1,0 +1,8 @@
+# Upstream changes from _extends are only recognized when modifications are made to this file in the default branch.
+_extends: .github
+repository:
+  name: github-action-atmos-affected-trigger-spacelift
+  description: A GitHub action to trigger spacelift for all atmos affected stacks
+  homepage: https://cloudposse.com/accelerate
+  topics: ""
+

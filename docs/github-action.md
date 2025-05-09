@@ -16,6 +16,7 @@
 | install-terraform | Whether to install terraform | true | false |
 | jq-force | Whether to force the installation of jq | true | false |
 | jq-version | The version of jq to install if install-jq is true | 1.6 | false |
+| skip-atmos-functions | Skip all Atmos functions such as terraform.output in `atmos describe affected` | false | false |
 | spacectl-version | The version of spacectl to install if install-spacectl is true | latest | false |
 | spacelift-api-key-id | The SPACELIFT\_API\_KEY\_ID | N/A | false |
 | spacelift-api-key-secret | The SPACELIFT\_API\_KEY\_SECRET | N/A | false |

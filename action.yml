@@ -71,16 +71,20 @@ inputs:
     default: 'comment'
     description: The method to use to trigger the Spacelift stack. Valid values are `comment` and `spacectl`
     required: false
+  skip-atmos-functions:
+    required: false
+    description: "Skip all Atmos functions such as terraform.output in `atmos describe affected`"
+    default: "false"
 
 runs:
   using: "composite"
   steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Atmos Affected Stacks
       id: affected-stacks
-      uses: cloudposse/github-action-atmos-affected-stacks@v1
+      uses: cloudposse/github-action-atmos-affected-stacks@v6
       with:
         default-branch: ${{inputs.default-branch}}
         head-ref: ${{inputs.head-ref}}
@@ -93,10 +97,11 @@ runs:
         install-jq: ${{inputs.install-jq}}
         jq-version: ${{inputs.jq-version}}
         jq-force: ${{inputs.jq-force}}
+        skip-atmos-functions: ${{inputs.skip-atmos-functions}}
 
     - name: Setup Spacectl
       if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.install-spacectl == 'true' && inputs.trigger-method == 'spacectl' }}
-      uses: spacelift-io/setup-spacectl@v0.4.0
+      uses: spacelift-io/setup-spacectl@v1.0.0
       env:
         GITHUB_TOKEN: ${{inputs.github-token}}
       with:
@@ -137,7 +142,7 @@ runs:
         fi
 
     - name: Create PR Comment with Affected Stacks
-      uses: marocchino/sticky-pull-request-comment@f61b6cf21ef2fcc468f4345cdfcc9bda741d2343 # v2.6.2
+      uses: marocchino/sticky-pull-request-comment@331f8f5b4215f0445d3c07b4967662a32a2d3e31 # v2.9.0
       if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.trigger-method == 'comment' && fromJSON(steps.create-pr-comment-body.outputs.affected-stacks-enabled) }}
       with:
         header: atmos-affected-stacks
