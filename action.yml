@@ -43,7 +43,7 @@ inputs:
     description: Whether to force the installation of jq
     required: false
   jq-version:
-    default: '1.6'
+    default: '1.7'
     description: The version of jq to install if install-jq is true
     required: false
   spacectl-version:
@@ -67,6 +67,10 @@ inputs:
     required: false
     description: "Skip all Atmos functions such as terraform.output in `atmos describe affected`"
     default: "false"
+  process-templates:
+    required: false
+    description: "Skip all Atmos functions such as terraform.output in `atmos describe affected`"
+    default: "true"
 outputs:
   affected:
     description: The affected stacks
@@ -95,6 +99,7 @@ runs:
         jq-version: ${{inputs.jq-version}}
         jq-force: ${{inputs.jq-force}}
         skip-atmos-functions: ${{inputs.skip-atmos-functions}}
+        process-templates: ${{inputs.process-templates}}
 
     - name: Setup Spacectl
       if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.install-spacectl == 'true' && inputs.trigger-method == 'spacectl' }}
