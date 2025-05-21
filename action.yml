@@ -98,7 +98,7 @@ runs:
 
     - name: Setup Spacectl
       if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.install-spacectl == 'true' && inputs.trigger-method == 'spacectl' }}
-      uses: spacelift-io/setup-spacectl@v1.0.0
+      uses: spacelift-io/setup-spacectl@v1.10.0
       env:
         GITHUB_TOKEN: ${{inputs.github-token}}
       with:
