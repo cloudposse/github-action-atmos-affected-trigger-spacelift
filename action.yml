@@ -38,10 +38,6 @@ inputs:
     default: 'true'
     description: Whether to install spacectl
     required: false
-  install-terraform:
-    default: 'true'
-    description: Whether to install terraform
-    required: false
   jq-force:
     default: 'true'
     description: Whether to force the installation of jq
@@ -63,14 +59,21 @@ inputs:
   spacelift-endpoint:
     description: The Spacelift endpoint. For example, https://unicorn.app.spacelift.io
     required: false
-  terraform-version:
-    default: latest
-    description: The version of terraform to install if install-terraform is true
-    required: false
   trigger-method:
     default: 'comment'
     description: The method to use to trigger the Spacelift stack. Valid values are `comment` and `spacectl`
     required: false
+  skip-atmos-functions:
+    required: false
+    description: "Skip all Atmos functions such as terraform.output in `atmos describe affected`"
+    default: "false"
+outputs:
+  affected:
+    description: The affected stacks
+    value: ${{ steps.affected-stacks.outputs.affected }}
+  has-affected-stacks:
+    description: Whether there are affected stacks
+    value: ${{ steps.affected-stacks.outputs.has-affected-stacks }}
 
 runs:
   using: "composite"
@@ -80,7 +83,7 @@ runs:
 
     - name: Atmos Affected Stacks
       id: affected-stacks
-      uses: cloudposse/github-action-atmos-affected-stacks@v1
+      uses: cloudposse/github-action-atmos-affected-stacks@v6
       with:
         default-branch: ${{inputs.default-branch}}
         head-ref: ${{inputs.head-ref}}
@@ -88,11 +91,10 @@ runs:
         atmos-version: ${{inputs.atmos-version}}
         atmos-config-path: ${{inputs.atmos-config-path}}
         atmos-include-spacelift-admin-stacks: "true"
-        install-terraform: ${{inputs.install-terraform}}
-        terraform-version: ${{inputs.terraform-version}}
         install-jq: ${{inputs.install-jq}}
         jq-version: ${{inputs.jq-version}}
         jq-force: ${{inputs.jq-force}}
+        skip-atmos-functions: ${{inputs.skip-atmos-functions}}
 
     - name: Setup Spacectl
       if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.install-spacectl == 'true' && inputs.trigger-method == 'spacectl' }}
