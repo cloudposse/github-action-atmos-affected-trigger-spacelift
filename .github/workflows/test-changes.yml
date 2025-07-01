@@ -37,6 +37,7 @@ jobs:
         with:
           atmos-config-path: ./tests
           install-atmos: true
+          skip-checkout: true
 
     outputs:
       affected: "${{ steps.current.outputs.affected }}"
