@@ -16,7 +16,6 @@ jobs:
         uses: actions/checkout@v4
 
       - uses: actions/checkout@v4
-        if: ${{ inputs.skip-checkout != 'true' }}
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           path: base-ref
@@ -28,6 +27,7 @@ jobs:
         with:
           atmos-config-path: ./tests
           install-atmos: true
+          skip-checkout: true
           # Set both the head and default branch to the PR branch.
           # We intentionally want to validate there are no changes
           head-ref: ${{ github.event.pull_request.head.ref }} 
