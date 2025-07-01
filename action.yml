@@ -5,6 +5,10 @@ branding:
   icon: "file"
   color: "white"
 inputs:
+  skip-checkout:
+    description: "Disable actions/checkout for head-ref and base-ref. Useful for when the checkout happens in a previous step and file are modified outside of git through other actions"
+    required: false
+    default: "false"
   atmos-config-path:
     default: .
     description: A path to the folder where atmos.yaml is located
@@ -79,7 +83,7 @@ runs:
   using: "composite"
   steps:
     - name: Checkout code
-      if: false
+      if: ${{ inputs.skip-checkout != 'true' }}
       uses: actions/checkout@v4
 
     - name: Atmos Affected Stacks
@@ -97,7 +101,7 @@ runs:
         jq-force: ${{inputs.jq-force}}
         skip-atmos-functions: ${{inputs.skip-atmos-functions}}
         nested-matrices-count: 1
-        skip-checkout: true
+        skip-checkout: ${{ inputs.skip-checkout }}
 
     - name: Setup Spacectl
       if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.install-spacectl == 'true' && inputs.trigger-method == 'spacectl' }}
