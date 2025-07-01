@@ -48,7 +48,7 @@ jobs:
     steps:
       - uses: nick-fields/assert-action@v2
         with:
-          expected: '[{"component":"test","component_type":"terraform","component_path":"tests/components/terraform/test","stack":"test-t-test","stack_slug":"test-t-test-test","affected":"stack.metadata","dependents":null,"included_in_dependents":false,"settings":null}]' 
+          expected: '[{"component":"test","component_type":"terraform","component_path":"tests/components/terraform/test","stack":"test-t-test","stack_slug":"test-t-test-test","affected":"stack.vars","affected_all":["stack.vars"],"dependents":null,"included_in_dependents":false,"settings":null}]' 
           actual: "${{ needs.test.outputs.affected }}"
 
       - uses: nick-fields/assert-action@v2
