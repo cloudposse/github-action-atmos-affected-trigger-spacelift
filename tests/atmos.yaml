@@ -21,3 +21,11 @@ logs:
   colors: false
   level: Trace
   file: "/tmp/atmos.log"
+
+github:
+  gitops:
+    terraform-version: 1.5.2
+    infracost-enabled: false
+    matrix:
+      sort-by: .stack_slug
+      group-by: .stack_slug | split("-") | [.[0], .[2]] | join("-")  
