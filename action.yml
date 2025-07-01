@@ -96,6 +96,7 @@ runs:
         jq-force: ${{inputs.jq-force}}
         skip-atmos-functions: ${{inputs.skip-atmos-functions}}
         nested-matrices-count: 1
+        skip-checkout: true
 
     - name: Setup Spacectl
       if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.install-spacectl == 'true' && inputs.trigger-method == 'spacectl' }}
