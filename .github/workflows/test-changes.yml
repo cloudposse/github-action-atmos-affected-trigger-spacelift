@@ -15,6 +15,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          path: base-ref
+          fetch-depth: 0
+
       - uses: cloudposse-github-actions/install-gh-releases@v1
         with:
           cache: true
@@ -31,6 +37,7 @@ jobs:
         with:
           atmos-config-path: ./tests
           install-atmos: true
+          skip-checkout: true
 
     outputs:
       affected: "${{ steps.current.outputs.affected }}"
@@ -42,7 +49,7 @@ jobs:
     steps:
       - uses: nick-fields/assert-action@v2
         with:
-          expected: '[{"component":"test","component_type":"terraform","component_path":"tests/components/terraform/test","stack":"test-t-test","stack_slug":"test-t-test-test","affected":"stack.metadata","dependents":null,"included_in_dependents":false,"settings":null}]' 
+          expected: '[{"component":"test","component_type":"terraform","component_path":"tests/components/terraform/test","stack":"test-t-test","stack_slug":"test-t-test-test","affected":"stack.vars","affected_all":["stack.vars"],"dependents":null,"included_in_dependents":false,"settings":null}]' 
           actual: "${{ needs.test.outputs.affected }}"
 
       - uses: nick-fields/assert-action@v2
