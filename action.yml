@@ -84,7 +84,7 @@ runs:
   steps:
     - name: Checkout code
       if: ${{ inputs.skip-checkout != 'true' }}
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Atmos Affected Stacks
       id: affected-stacks
