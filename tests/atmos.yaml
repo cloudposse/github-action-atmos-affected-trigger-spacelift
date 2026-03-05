@@ -1,4 +1,4 @@
-base_path: "./tests"
+base_path: "."
 
 components:
   terraform:
