@@ -9,3 +9,19 @@ components:
     test:
       vars:
         seed: 1
+    test-workspace-enabled:
+      metadata:
+        component: test
+      settings:
+        spacelift:
+          workspace_enabled: true
+      vars:
+        seed: 1
+    test-workspace-disabled:
+      metadata:
+        component: test
+      settings:
+        spacelift:
+          workspace_enabled: false
+      vars:
+        seed: 1

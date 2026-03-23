@@ -1,0 +1,84 @@
+name: Test Filter by Workspace Enabled
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          path: base-ref
+          fetch-depth: 0
+
+      - uses: cloudposse-github-actions/install-gh-releases@v1
+        with:
+          cache: true
+          config: |-
+            mikefarah/yq: v4.44.3
+
+      # Make a change to trigger all three test components
+      - name: Make a change
+        run: |
+          yq -i '.components.terraform.test.vars.seed = 2' ./tests/stacks/orgs/test/test.yaml
+          yq -i '.components.terraform.test-workspace-enabled.vars.seed = 2' ./tests/stacks/orgs/test/test.yaml
+          yq -i '.components.terraform.test-workspace-disabled.vars.seed = 2' ./tests/stacks/orgs/test/test.yaml
+
+      - uses: ./
+        id: current
+        with:
+          atmos-config-path: ./tests
+          atmos-include-settings: "true"
+          filter-by-workspace-enabled: "true"
+          install-atmos: true
+          skip-checkout: true
+
+    outputs:
+      affected: "${{ steps.current.outputs.affected }}"
+      has-affected-stacks: "${{ steps.current.outputs.has-affected-stacks }}"
+
+  assert:
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - name: Verify workspace_enabled=false stacks are filtered out
+        run: |
+          affected='${{ needs.test.outputs.affected }}'
+          echo "Affected stacks:"
+          echo "$affected" | jq .
+
+          # Should have affected stacks
+          if [ "${{ needs.test.outputs.has-affected-stacks }}" != "true" ]; then
+            echo "Expected has-affected-stacks to be true"
+            exit 1
+          fi
+
+          # test-workspace-disabled should NOT be in the output (workspace_enabled: false)
+          if echo "$affected" | jq -e '.[] | select(.stack_slug == "test-t-test-test-workspace-disabled")' > /dev/null 2>&1; then
+            echo "FAIL: test-workspace-disabled should have been filtered out"
+            exit 1
+          fi
+          echo "PASS: test-workspace-disabled correctly filtered out"
+
+          # test-workspace-enabled SHOULD be in the output (workspace_enabled: true)
+          if ! echo "$affected" | jq -e '.[] | select(.stack_slug == "test-t-test-test-workspace-enabled")' > /dev/null 2>&1; then
+            echo "FAIL: test-workspace-enabled should be present"
+            exit 1
+          fi
+          echo "PASS: test-workspace-enabled correctly included"
+
+          # test (no workspace_enabled set) SHOULD be in the output (default behavior)
+          if ! echo "$affected" | jq -e '.[] | select(.stack_slug == "test-t-test-test")' > /dev/null 2>&1; then
+            echo "FAIL: test (no setting) should be present"
+            exit 1
+          fi
+          echo "PASS: test (no workspace_enabled) correctly included"
