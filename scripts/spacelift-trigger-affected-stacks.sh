@@ -14,7 +14,7 @@ total_duration=0
 # Build jq filter based on whether workspace_enabled filtering is enabled
 jq_filter='.[] | select(.spacelift_stack != null)'
 if [ "${FILTER_BY_WORKSPACE_ENABLED}" = "true" ]; then
-  jq_filter="${jq_filter} | select((.settings.spacelift.workspace_enabled // true) != false)"
+  jq_filter="${jq_filter} | select(.settings.spacelift.workspace_enabled != false)"
 fi
 jq_filter="${jq_filter} | .spacelift_stack"
 
