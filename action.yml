@@ -102,6 +102,10 @@ inputs:
   spacelift-endpoint:
     description: The Spacelift endpoint. For example, https://unicorn.app.spacelift.io
     required: false
+  filter-by-workspace-enabled:
+    default: 'false'
+    description: "Filter out stacks where settings.spacelift.workspace_enabled is false. When enabled, only stacks with workspace_enabled not explicitly set to false will be triggered or posted in PR comments."
+    required: false
   trigger-method:
     default: 'comment'
     description: The method to use to trigger the Spacelift stack. Valid values are `comment` and `spacectl`
@@ -130,7 +134,7 @@ runs:
       with:
         atmos-config-path: ${{inputs.atmos-config-path}}
         atmos-include-dependents: ${{inputs.atmos-include-dependents}}
-        atmos-include-settings: ${{inputs.atmos-include-settings}}
+        atmos-include-settings: ${{ inputs.filter-by-workspace-enabled == 'true' || inputs.atmos-include-settings == 'true' }}
         atmos-include-spacelift-admin-stacks: ${{inputs.atmos-include-spacelift-admin-stacks}}
         atmos-stack: ${{inputs.atmos-stack}}
         atmos-version: ${{inputs.atmos-version}}
@@ -170,7 +174,7 @@ runs:
           spacectl_deploy="true"
         fi
         printf "%s\n" '${{ steps.affected-stacks.outputs.affected }}' >affected-stacks.json
-        ${GITHUB_ACTION_PATH}/scripts/spacelift-trigger-affected-stacks.sh $spacectl_deploy
+        FILTER_BY_WORKSPACE_ENABLED="${{inputs.filter-by-workspace-enabled}}" ${GITHUB_ACTION_PATH}/scripts/spacelift-trigger-affected-stacks.sh $spacectl_deploy
 
     - name: Create PR Comment Body with Affected Stacks
       if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.trigger-method == 'comment' }}
@@ -182,7 +186,7 @@ runs:
           spacectl_deploy="true"
         fi
         printf "%s\n" '${{ steps.affected-stacks.outputs.affected }}' >affected-stacks.json
-        ${GITHUB_ACTION_PATH}/scripts/spacelift-generate-pr-comment-body.sh $spacectl_deploy
+        FILTER_BY_WORKSPACE_ENABLED="${{inputs.filter-by-workspace-enabled}}" ${GITHUB_ACTION_PATH}/scripts/spacelift-generate-pr-comment-body.sh $spacectl_deploy
         # Check if comment body is empty (when all affected stacks have spacelift workspace disabled)
         if [ -s comment-body.txt ]; then
           echo "affected-stacks-enabled=true" >> $GITHUB_OUTPUT

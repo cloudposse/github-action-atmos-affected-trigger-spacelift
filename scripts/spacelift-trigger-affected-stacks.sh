@@ -11,8 +11,15 @@ success_stacks=()
 
 total_duration=0
 
+# Build jq filter based on whether workspace_enabled filtering is enabled
+jq_filter='.[] | select(.spacelift_stack != null)'
+if [ "${FILTER_BY_WORKSPACE_ENABLED}" = "true" ]; then
+  jq_filter="${jq_filter} | select((.settings.spacelift.workspace_enabled // true) != false)"
+fi
+jq_filter="${jq_filter} | .spacelift_stack"
+
 # Use jq to extract the spacelift_stack values and iterate through them
-for spacelift_stack in $(jq -r '.[].spacelift_stack' < "affected-stacks.json" | grep -v null); do
+for spacelift_stack in $(jq -r "${jq_filter}" < "affected-stacks.json"); do
   start_time=$(date +%s%N)  # Get the start time in nanoseconds
 
   # Run the spacectl command, capture the error message, and store the exit status
