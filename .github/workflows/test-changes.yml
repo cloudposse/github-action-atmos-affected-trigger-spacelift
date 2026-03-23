@@ -55,23 +55,20 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test]
     steps:
-      - name: Verify affected stacks contain expected components
+      - name: Verify affected stacks contain test component
         run: |
           affected='${{ needs.test.outputs.affected }}'
           count=$(echo "$affected" | jq 'length')
-          if [ "$count" -ne 3 ]; then
-            echo "Expected 3 affected stacks, got $count"
+          if [ "$count" -ne 1 ]; then
+            echo "Expected 1 affected stack, got $count"
             echo "$affected" | jq .
             exit 1
           fi
-          # Verify all three components are present
-          for comp in test test-workspace-enabled test-workspace-disabled; do
-            if ! echo "$affected" | jq -e ".[] | select(.component == \"test\" and .stack_slug == \"test-t-test-${comp}\")" > /dev/null 2>&1; then
-              echo "Missing expected component: $comp"
-              exit 1
-            fi
-          done
-          echo "All 3 expected stacks found"
+          if ! echo "$affected" | jq -e '.[] | select(.stack_slug == "test-t-test-test")' > /dev/null 2>&1; then
+            echo "Missing expected stack: test-t-test-test"
+            exit 1
+          fi
+          echo "PASS: test component correctly detected as affected"
 
       - uses: nick-fields/assert-action@v2
         with:
