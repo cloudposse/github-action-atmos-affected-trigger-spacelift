@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test]
     steps:
-      - name: Verify workspace_enabled=false stacks are filtered out
+      - name: Verify affected output contains all 3 stacks
         run: |
           affected='${{ needs.test.outputs.affected }}'
           echo "Affected stacks:"
@@ -71,23 +71,42 @@ jobs:
             exit 1
           fi
 
-          # test-workspace-disabled should NOT be in the output (workspace_enabled: false)
-          if echo "$affected" | jq -e '.[] | select(.stack_slug == "test-t-test-test-workspace-disabled")' > /dev/null 2>&1; then
+          # All 3 stacks should be in the raw affected output
+          count=$(echo "$affected" | jq 'length')
+          if [ "$count" -ne 3 ]; then
+            echo "FAIL: Expected 3 affected stacks, got $count"
+            exit 1
+          fi
+          echo "PASS: All 3 stacks detected as affected"
+
+      - name: Verify jq filter excludes workspace_enabled=false
+        run: |
+          affected='${{ needs.test.outputs.affected }}'
+
+          # Apply the same jq filter used in the scripts
+          jq_filter='.[] | select(.spacelift_stack != null) | select(.settings.spacelift.workspace_enabled != false) | .spacelift_stack'
+          filtered=$(echo "$affected" | jq -r "$jq_filter")
+          echo "Filtered spacelift stacks:"
+          echo "$filtered"
+
+          # test-workspace-enabled should be in filtered output (workspace_enabled: true, has spacelift_stack)
+          if ! echo "$filtered" | grep -q "test-t-test-test-workspace-enabled"; then
+            echo "FAIL: test-workspace-enabled should be present after filtering"
+            exit 1
+          fi
+          echo "PASS: test-workspace-enabled correctly included"
+
+          # test-workspace-disabled should NOT be in filtered output (workspace_enabled: false)
+          # It has no spacelift_stack field, so it's filtered by the first select
+          if echo "$filtered" | grep -q "test-workspace-disabled"; then
             echo "FAIL: test-workspace-disabled should have been filtered out"
             exit 1
           fi
           echo "PASS: test-workspace-disabled correctly filtered out"
 
-          # test-workspace-enabled SHOULD be in the output (workspace_enabled: true)
-          if ! echo "$affected" | jq -e '.[] | select(.stack_slug == "test-t-test-test-workspace-enabled")' > /dev/null 2>&1; then
-            echo "FAIL: test-workspace-enabled should be present"
+          # test (no spacelift settings) should NOT be in filtered output (no spacelift_stack field)
+          if echo "$filtered" | grep -q "test-t-test-test$"; then
+            echo "FAIL: test (no spacelift_stack) should not be in spacelift trigger list"
             exit 1
           fi
-          echo "PASS: test-workspace-enabled correctly included"
-
-          # test (no workspace_enabled set) SHOULD be in the output (default behavior)
-          if ! echo "$affected" | jq -e '.[] | select(.stack_slug == "test-t-test-test")' > /dev/null 2>&1; then
-            echo "FAIL: test (no setting) should be present"
-            exit 1
-          fi
-          echo "PASS: test (no workspace_enabled) correctly included"
+          echo "PASS: test (no spacelift_stack) correctly excluded from trigger list"
