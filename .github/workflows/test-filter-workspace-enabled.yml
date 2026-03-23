@@ -14,6 +14,7 @@ on:
 permissions:
   contents: read
   id-token: write
+  pull-requests: write
 
 jobs:
   test:
@@ -48,6 +49,7 @@ jobs:
           atmos-config-path: ./tests
           atmos-include-settings: "true"
           filter-by-workspace-enabled: "true"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           install-atmos: true
           skip-checkout: true
 
