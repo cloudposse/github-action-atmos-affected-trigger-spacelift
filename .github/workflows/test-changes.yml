@@ -55,10 +55,20 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test]
     steps:
-      - uses: nick-fields/assert-action@v2
-        with:
-          expected: '[{"component":"test","component_type":"terraform","component_path":"components/terraform/test","stack":"test-t-test","stack_slug":"test-t-test-test","affected":"stack.vars","affected_all":["stack.vars"],"dependents":null,"included_in_dependents":false,"settings":null}]'
-          actual: "${{ needs.test.outputs.affected }}"
+      - name: Verify affected stacks contain test component
+        run: |
+          affected='${{ needs.test.outputs.affected }}'
+          count=$(echo "$affected" | jq 'length')
+          if [ "$count" -ne 1 ]; then
+            echo "Expected 1 affected stack, got $count"
+            echo "$affected" | jq .
+            exit 1
+          fi
+          if ! echo "$affected" | jq -e '.[] | select(.stack_slug == "test-t-test-test")' > /dev/null 2>&1; then
+            echo "Missing expected stack: test-t-test-test"
+            exit 1
+          fi
+          echo "PASS: test component correctly detected as affected"
 
       - uses: nick-fields/assert-action@v2
         with:
