@@ -97,6 +97,7 @@ spacelift stacks directly rather than via comment/push policy.
 | base-ref | The base ref to checkout. If not provided, the head default branch is used. | N/A | false |
 | default-branch | The default branch to use for the base ref. | ${{ github.event.repository.default\_branch }} | false |
 | deploy | A flag to indicate if a deployment should be triggered. If false, a preview will be triggered. | false | false |
+| filter-by-workspace-enabled | Filter out stacks where settings.spacelift.workspace\_enabled is false. When enabled, only stacks with workspace\_enabled not explicitly set to false will be triggered or posted in PR comments. | false | false |
 | github-token | A GitHub token for running the spacelift-io/setup-spacectl action | N/A | true |
 | head-ref | The head ref to checkout. If not provided, the head default branch is used. | N/A | false |
 | identity | Atmos auth identity |  | false |
