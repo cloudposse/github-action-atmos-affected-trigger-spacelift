@@ -134,7 +134,7 @@ runs:
       with:
         atmos-config-path: ${{inputs.atmos-config-path}}
         atmos-include-dependents: ${{inputs.atmos-include-dependents}}
-        atmos-include-settings: ${{ inputs.filter-by-workspace-enabled == 'true' || inputs.atmos-include-settings == 'true' }}
+        atmos-include-settings: ${{ inputs.atmos-include-settings }}
         atmos-include-spacelift-admin-stacks: ${{inputs.atmos-include-spacelift-admin-stacks}}
         atmos-stack: ${{inputs.atmos-stack}}
         atmos-version: ${{inputs.atmos-version}}
@@ -151,6 +151,20 @@ runs:
         process-templates: ${{ inputs.skip-process-templates != 'true' }}
         skip-atmos-functions: ${{inputs.skip-atmos-functions}}
         skip-checkout: ${{inputs.skip-checkout}}
+
+    # When filtering by workspace_enabled, we need settings in the affected stacks data.
+    # We can't include settings via the upstream action because the large payload in
+    # GITHUB_OUTPUT causes GitHub Actions' expression evaluator to OOM.
+    # Instead, re-run atmos describe affected with --include-settings writing directly
+    # to file, bypassing GITHUB_OUTPUT entirely.
+    - name: Enrich affected stacks with settings for filtering
+      if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.filter-by-workspace-enabled == 'true' }}
+      shell: bash
+      run: |
+        atmos describe affected \
+          --include-settings \
+          --file affected-stacks.json \
+          --repo-path "${GITHUB_WORKSPACE}/base-ref"
 
     - name: Setup Spacectl
       if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.install-spacectl == 'true' && inputs.trigger-method == 'spacectl' }}
@@ -173,7 +187,6 @@ runs:
         if [ "${{inputs.deploy}}" = "true" ]; then
           spacectl_deploy="true"
         fi
-        printf "%s\n" '${{ steps.affected-stacks.outputs.affected }}' >affected-stacks.json
         FILTER_BY_WORKSPACE_ENABLED="${{inputs.filter-by-workspace-enabled}}" ${GITHUB_ACTION_PATH}/scripts/spacelift-trigger-affected-stacks.sh $spacectl_deploy
 
     - name: Create PR Comment Body with Affected Stacks
@@ -185,7 +198,6 @@ runs:
         if [ "${{inputs.deploy}}" = "true" ]; then
           spacectl_deploy="true"
         fi
-        printf "%s\n" '${{ steps.affected-stacks.outputs.affected }}' >affected-stacks.json
         FILTER_BY_WORKSPACE_ENABLED="${{inputs.filter-by-workspace-enabled}}" ${GITHUB_ACTION_PATH}/scripts/spacelift-generate-pr-comment-body.sh $spacectl_deploy
         # Check if comment body is empty (when all affected stacks have spacelift workspace disabled)
         if [ -s comment-body.txt ]; then
