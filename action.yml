@@ -67,6 +67,10 @@ inputs:
     required: false
     description: "Skip all Atmos functions such as terraform.output in `atmos describe affected`"
     default: "false"
+  process-functions:
+    required: false
+    description: "Whether to process atmos functions"
+    default: "true"
   process-templates:
     required: false
     description: "Skip all Atmos functions such as terraform.output in `atmos describe affected`"
@@ -99,6 +103,7 @@ runs:
         jq-version: ${{inputs.jq-version}}
         jq-force: ${{inputs.jq-force}}
         skip-atmos-functions: ${{inputs.skip-atmos-functions}}
+        process-functions: ${{inputs.process-functions}}
         process-templates: ${{inputs.process-templates}}
 
     - name: Setup Spacectl
