@@ -70,7 +70,7 @@ jobs:
           fi
           echo "PASS: test component correctly detected as affected"
 
-      - uses: nick-fields/assert-action@v2
+      - uses: nick-fields/assert-action@v3.0.0
         with:
           expected: 'true'
           actual: "${{ needs.test.outputs.has-affected-stacks }}"
