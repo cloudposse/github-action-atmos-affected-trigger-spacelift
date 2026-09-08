@@ -29,9 +29,16 @@ for spacelift_stack in $(jq -r '.[].spacelift_stack' < "affected-stacks.json" | 
     else
       start_time=$(date +%s%N)  # Get the start time in nanoseconds
 
+      # Spacelift always lowercases the auto-generated stack `id` (slug), but
+      # preserves the original casing in `name`. atmos's `spacelift_stack`
+      # value matches `name`, so passing it directly as `--id` fails with
+      # "stack not found" whenever it contains uppercase characters. Resolve
+      # the actual `id` for this stack before calling spacectl.
+      stack_id="$(cat spacelift_stacks.json | jq -r ".[] | select(.name == \"$spacelift_stack\") | .id")"
+
       # Run the spacectl command, capture the error message, and store the exit status
-      echo "Running spacectl stack $spacectl_command --id \"$spacelift_stack\" --sha \"$TRIGGERING_SHA\""
-      error_message=$(spacectl stack $spacectl_command --id "$spacelift_stack" --sha "$TRIGGERING_SHA" 2>&1)
+      echo "Running spacectl stack $spacectl_command --id \"$stack_id\" --sha \"$TRIGGERING_SHA\""
+      error_message=$(spacectl stack $spacectl_command --id "$stack_id" --sha "$TRIGGERING_SHA" 2>&1)
       exit_status=$?
 
       end_time=$(date +%s%N)  # Get the end time in nanoseconds
