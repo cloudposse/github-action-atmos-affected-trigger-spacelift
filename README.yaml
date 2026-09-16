@@ -38,10 +38,11 @@ related: []
 # Short description of this project
 description: GitHub Action for Triggering Affected Spacelift Stacks
 
-introduction: |-
+deprecation_notice: |-
   > [!WARNING]
   > **Deprecated.** Migrate to [Atmos Native CI](https://atmos.tools/deprecated/github-actions/atmos-affected-trigger-spacelift).
 
+introduction: |-
   This action is deprecated, along with the rest of the Spacelift integration it depends on. See the
   migration guide at https://atmos.tools/deprecated/github-actions/atmos-affected-trigger-spacelift
   for how to move to Atmos Native CI.
