@@ -34,7 +34,7 @@ GitHub Action for Triggering Affected Spacelift Stacks
 
 
 > [!WARNING]
-> **Deprecated.** Migrate to [Atmos Native CI](https://atmos.tools/deprecated/github-actions/atmos-affected-trigger-spacelift).
+> **Deprecated.** Migrate to [Atmos Native CI](https://atmos.tools/ci).
 
 
 
