@@ -37,6 +37,13 @@ GitHub Action for Triggering Affected Spacelift Stacks
 
 ## Introduction
 
+> [!WARNING]
+> **Deprecated.** Migrate to [Atmos Native CI](https://atmos.tools/ci).
+
+This action is deprecated, along with the rest of the Spacelift integration it depends on. See the
+migration guide at https://atmos.tools/deprecated/github-actions/atmos-affected-trigger-spacelift
+for how to move to Atmos Native CI.
+
 This repo contains a GitHub Action that determines the affected [Atmos](https://atmos.tools) stacks for a PR, then
 creates a comment on the PR which Spacelift can use to trigger the corresponding stacks via a push policy.
 
@@ -83,6 +90,10 @@ spacelift stacks directly rather than via comment/push policy.
 
 
 
+
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
 
 ## Inputs
 <!-- markdownlint-disable -->
