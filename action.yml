@@ -193,7 +193,7 @@ runs:
         fi
 
     - name: Create PR Comment with Affected Stacks
-      uses: marocchino/sticky-pull-request-comment@331f8f5b4215f0445d3c07b4967662a32a2d3e31 # v2.9.0
+      uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
       if: ${{ steps.affected-stacks.outputs.has-affected-stacks == 'true' && inputs.trigger-method == 'comment' && fromJSON(steps.create-pr-comment-body.outputs.affected-stacks-enabled) }}
       with:
         header: atmos-affected-stacks
